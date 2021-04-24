@@ -38,12 +38,30 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     required: true,
-    default: 'https://i.imgur.com/jCEMu8X.jpg',
+    default: 'https://pictures.s3.yandex.net/resources/avatar_1604080799.jpg',
     validate: {
       validator: (v) => validator.isURL(v),
       message: "The submitted link is broken"
     }
   }
 });
+
+userSchema.statics.findUserByCredentials = function findUserByCredentials(email, password) {
+  return this.findOne({ email }).select('+password')
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(new Error('Incorrect email or password'));
+      }
+
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            return Promise.reject(new Error('Incorrect email or password'));
+          }
+
+          return user;
+        });
+    });
+};
 
 module.exports = mongoose.model('user', userSchema);

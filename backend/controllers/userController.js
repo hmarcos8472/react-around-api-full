@@ -62,21 +62,29 @@ function createUser(req, res) {
         })
         .catch(next);
   })
-  // return User.countDocuments({})
-  // .then(id => {
-  //   return User.create({name, about, avatar, id})
-  // })
-  // .then(user => {
-  //   res.status(200).send(user)
-  // })
-  // .catch((err) => {
-  //   if (err.name === "ValidationError") {
-  //     res.status(400).send({message : "User validation failed"})
-  //   } else {
-  //     res.status(500).send({message : "Internal server error"})
-  //   }
-  // })
-}
+};
+
+/////
+function login(req, res, next) {
+  const {email, password} = req.body
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      if (!user) {
+        throw new NotFound('User does not exist')
+      }
+      const token = jwt.sign(
+        {_id: user._id},
+        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
+        {expiresIn: '7d'}
+      );
+      res.send({token})
+    })
+    .catch((err) => {
+      if (res.status(401)) {
+        next(new Unauthorized('Incorrect email and/or password.'))
+      } else next(err)
+    })
+};
 
 /////
 function updateUserName(req, res) {

@@ -23,6 +23,9 @@ app.use(express.static(path.join(__dirname, 'public/static')))
 const {usersRouter} = require('./routes/users.js')
 const {cardsRouter} = require('./routes/cards.js')
 
+const auth = require('./middleware/auth.js')
+const {requestLogger, errorLogger} = require('./middleware/logger.js')
+
 
 app.use((req, res, next) => {
   req.user = {
