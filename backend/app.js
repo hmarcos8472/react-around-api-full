@@ -6,6 +6,8 @@ const bodyParser = require('body-parser')
 const {usersRouter} = require('./routes/users.js')
 const {cardsRouter} = require('./routes/cards.js')
 
+const {createUser, login} = require('./controllers/userController.js')
+
 const helmet = require('helmet')
 const cors = require('cors')
 const { celebrate, Joi, errors, Segments } = require('celebrate');
@@ -38,8 +40,7 @@ app.use(express.static(path.join(__dirname, 'public/static')))
 
 app.use(requestLogger)
 
-app.post(
-  '/signup',
+app.post('/signup',
   celebrate({
     body: Joi.object().keys({
       email: Joi.string().required().email(),
@@ -49,8 +50,7 @@ app.post(
   createUser
 );
 
-app.post(
-  '/signin',
+app.post('/signin',
   celebrate({
     body: Joi.object().keys({
       email: Joi.string().required().email(),

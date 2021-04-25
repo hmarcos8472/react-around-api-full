@@ -1,5 +1,5 @@
 const express = require('express')
-
+const {celebrate, Joi} = require('celebrate')
 const cardsRouter = express.Router()
 
 const { getCards, createCard, deleteCard, likeCard, dislikeCard } = require('../controllers/cardController.js')

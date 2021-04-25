@@ -91,7 +91,6 @@ function getCurrentUser(req, res, next) {
   User.findById(req.user._id)
     .then((user) => {
       if(!user) throw new NotFound('User not found.');
-
       res.send({ data: user});
     })
     .catch(next);
@@ -113,4 +112,4 @@ function updateAvatar(req, res) {
       res.status(500).send({ message: "500 Internal server error" });})
 };
 
-module.exports = {getSingleUser, getUsers, createUser, updateUserName, updateAvatar}
+module.exports = {getSingleUser, getUsers, createUser, updateUserName, updateAvatar, getCurrentUser, login, createUser}
