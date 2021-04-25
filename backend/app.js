@@ -3,6 +3,10 @@ const mongoose = require('mongoose')
 const app = express();
 const bodyParser = require('body-parser')
 
+const helmet = require('helmet')
+const cors = require('cors')
+const { celebrate, Joi, errors, Segments } = require('celebrate');
+
 mongoose.connect('mongodb://localhost:27017/aroundb', {
   useNewUrlParser: true,
   useCreateIndex: true,
@@ -12,10 +16,45 @@ mongoose.connect('mongodb://localhost:27017/aroundb', {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+// app.get('/crash-test', () => {
+//   setTimeout(() => {
+//     throw new Error('Server will crash now');
+//   }, 0);
+// });
+
+app.post(
+  '/signup',
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().required().email(),
+      password: Joi.string().required()
+    }).unknown(true)
+  }),
+  createUser
+);
+
+app.post(
+  '/signin',
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().required().email(),
+      password: Joi.string().required()
+    }).unknown(true)
+  }),
+  login
+);
+
 // listen to port 3000
 const { PORT = 3000 } = process.env;
 
 const path = require('path')
+
+app.use(cors())
+app.options('*', cors())
+app.use(requestLogger)
+app.use(express.json())
+app.use(helmet())
+app.use(auth)
 
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.static(path.join(__dirname, 'public/static')))
@@ -25,14 +64,6 @@ const {cardsRouter} = require('./routes/cards.js')
 
 const auth = require('./middleware/auth.js')
 const {requestLogger, errorLogger} = require('./middleware/logger.js')
-
-
-app.use((req, res, next) => {
-  req.user = {
-    _id: '5f825dab0d8e6ba76c15c74e'
-  };
-  next();
-});
 
 app.use('/', usersRouter)
 

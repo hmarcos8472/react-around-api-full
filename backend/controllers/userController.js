@@ -87,6 +87,17 @@ function login(req, res, next) {
 };
 
 /////
+function getCurrentUser(req, res, next) {
+  User.findById(req.user._id)
+    .then((user) => {
+      if(!user) throw new NotFound('User not found.');
+
+      res.send({ data: user});
+    })
+    .catch(next);
+}
+
+/////
 function updateUserName(req, res) {
   User.findByIdAndUpdate(req.params.id, "name: req.body")
     .then(user => res.send({ data: req.body }))
