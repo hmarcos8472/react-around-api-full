@@ -1,0 +1,10 @@
+.header__text-container_hidden {
+  display: flex;
+  flex-direction: row;
+}
+
+@media (max-width: 500px) {
+  .header__text-container_hidden {
+    display: none;
+  }
+}

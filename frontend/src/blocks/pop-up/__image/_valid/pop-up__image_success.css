@@ -1,0 +1,10 @@
+.pop-up__image_success {
+  background-image: url(../../../../images/Union.svg)
+}
+
+@media (max-width: 500px) {
+  .pop-up__image_success {
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+}

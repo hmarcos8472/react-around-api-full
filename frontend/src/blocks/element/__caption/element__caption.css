@@ -1,0 +1,14 @@
+.element__caption {
+  background-color: #fff;
+  height: 80px;
+  border-radius: 0 0 10px 10px;
+  display: flex;
+  position: relative;
+  max-width: 282px;
+}
+
+@media (min-width: 700px) and (max-width: 824px) {
+  .element__caption {
+    height: 67px;
+  }
+}

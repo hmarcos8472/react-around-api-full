@@ -1,0 +1,20 @@
+.pop-up__heading_type_delete {
+  width: 83.25%;
+  margin: 0 auto;
+  padding: 20px 0 15px;
+  font-weight: 900;
+  font-size: 24px;
+  line-height: 29px;
+}
+
+@media (min-width: 430px) and (max-width: 500px) {
+  .pop-up__heading_type_delete {
+    padding: 30px 0 45px;
+  }
+}
+
+@media (max-width: 430px) {
+  .pop-up__heading_type_delete {
+    padding: 25px 0 33px;
+  }
+}

@@ -1,0 +1,10 @@
+.pop-up__image_fail {
+  background-image: url(../../../../images/Fail.svg)
+}
+
+@media (max-width: 500px) {
+  .pop-up__image_fail {
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+}
