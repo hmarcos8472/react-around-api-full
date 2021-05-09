@@ -1,11 +1,12 @@
 const express = require('express')
 const {celebrate, Joi} = require('celebrate')
+
 const usersRouter = express.Router()
 
-const { getSingleUser, getUsers, updateUserName, updateAvatar, getCurrentUser } = require('../controllers/userController.js')
+const { getSingleUser, getUsers, createUser, updateUserName, updateAvatar, login, getCurrentUser } = require('../controllers/userController.js')
 
 usersRouter.get('/users', getUsers)
-usersRouter.get('/me', getCurrentUser)
+usersRouter.get('/users/me', getCurrentUser)
 
 usersRouter.get(
   '/users/:id',
@@ -15,12 +16,14 @@ usersRouter.get(
     }).unknown(true)
   }),
   getSingleUser
-);
+)
+
+usersRouter.post('/users', createUser)
 
 usersRouter.patch(
-  '/me',
+  '/users/me',
   celebrate({
-    params: Joi.object().keys({
+    body: Joi.object().keys({
       name: Joi.string().required().min(2).max(30),
       about: Joi.string().required().min(2).max(30)
     }).unknown(true)
@@ -29,13 +32,14 @@ usersRouter.patch(
 )
 
 usersRouter.patch(
-  '/me/avatar',
+  '/users/me/avatar',
   celebrate({
-    params: Joi.object().keys({
+    body: Joi.object().keys({
       avatar: Joi.string().uri().required()
     }).unknown(true)
   }),
   updateAvatar
 )
+
 
 module.exports = {usersRouter}

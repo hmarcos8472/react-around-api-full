@@ -1,19 +1,17 @@
 const express = require('express');
 const mongoose = require('mongoose')
-const app = express();
 const bodyParser = require('body-parser')
-
-const {usersRouter} = require('./routes/users.js')
-const {cardsRouter} = require('./routes/cards.js')
-
-const {createUser, login} = require('./controllers/userController.js')
-
-const helmet = require('helmet')
-const cors = require('cors')
 const { celebrate, Joi, errors, Segments } = require('celebrate');
+const path = require('path')
 
-const auth = require('./middleware/auth.js')
-const {requestLogger, errorLogger} = require('./middleware/logger.js')
+const auth = require('./middleware/auth');
+const {requestLogger, errorLogger} = require('./middleware/logger');
+const {NotFound} = require('./middleware/errors/NotFound.js')
+const {login, createUser} = require('./controllers/userController');
+
+const app = express();
+// listen to port 3000
+const { PORT = 3000 } = process.env;
 
 mongoose.connect('mongodb://localhost:27017/aroundb', {
   useNewUrlParser: true,
@@ -24,23 +22,8 @@ mongoose.connect('mongodb://localhost:27017/aroundb', {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// listen to port 3000
-const { PORT = 3000 } = process.env;
-
-const path = require('path')
-
-app.use(cors())
-app.options('*', cors())
-app.use(express.json())
-app.use(helmet())
-app.use(auth)
-
-app.use(express.static(path.join(__dirname, 'public')))
-app.use(express.static(path.join(__dirname, 'public/static')))
-
-app.use(requestLogger)
-
-app.post('/signup',
+app.post(
+  '/signup',
   celebrate({
     body: Joi.object().keys({
       email: Joi.string().required().email(),
@@ -50,7 +33,8 @@ app.post('/signup',
   createUser
 );
 
-app.post('/signin',
+app.post(
+  '/signin',
   celebrate({
     body: Joi.object().keys({
       email: Joi.string().required().email(),
@@ -60,8 +44,26 @@ app.post('/signin',
   login
 );
 
+app.use(auth)
+const {usersRouter} = require('./routes/users.js')
+const {cardsRouter} = require('./routes/cards.js')
+
+
+app.use((req, res, next) => {
+  req.user = {
+    _id: '5f825dab0d8e6ba76c15c74e'
+  };
+  next();
+});
+
+app.use(requestLogger)
+
 app.use('/', usersRouter)
 app.use('/', cardsRouter)
+
+app.get('*', (req, res, next) => {
+  next(new NotFound('Requested resource not found'));
+});
 
 app.get('/crash-test', () => {
   setTimeout(() => {
@@ -69,21 +71,19 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
+// Error logging
 app.use(errorLogger)
 app.use(errors())
 
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
 
+// Centralized error handling
   res.status(statusCode).send({
     message: statusCode === 500 ? 'An error occured on the server' : message
   });
 
   next();
-});
-
-app.use(function (req, res) {
-  res.status(404).send({ message : " Requested Resource Not Found..." });
 });
 
 app.listen(PORT, () => {
