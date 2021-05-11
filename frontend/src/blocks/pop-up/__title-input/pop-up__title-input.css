@@ -1,0 +1,19 @@
+.pop-up__title-input {
+  border: none;
+  margin: 0 0 30px;
+  font-size: 14px;
+  line-height: 17px;
+  border-bottom: 1px solid #cccccc;
+}
+
+@media (min-width: 430px) and (max-width: 500px){
+  .pop-up__title-input {
+    margin: 0 0 20px;
+  }
+}
+
+@media (max-width: 430px) {
+  .pop-up__title-input {
+    margin: 0 0 15px;
+  }
+}

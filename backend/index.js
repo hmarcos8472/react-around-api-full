@@ -1,17 +1,26 @@
+/* eslint-disable prefer-template */
+// eslint-disable-next-line import/no-extraneous-dependencies
 const express = require('express');
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const { celebrate, Joi, errors, Segments } = require('celebrate');
 const path = require('path')
+const cors = require('cors');
+const helmet = require('helmet');
 
 const auth = require('./middleware/auth');
 const {requestLogger, errorLogger} = require('./middleware/logger');
-const {NotFound} = require('./middleware/errors/NotFound.js')
+const NotFound = require('./middleware/errors/NotFound.js')
 const {login, createUser} = require('./controllers/userController');
 
 const app = express();
 // listen to port 3000
 const { PORT = 3000 } = process.env;
+
+app.use(cors());
+app.options('*', cors());
+app.use(express.json());
+app.use(helmet());
 
 mongoose.connect('mongodb://localhost:27017/aroundb', {
   useNewUrlParser: true,
@@ -20,7 +29,7 @@ mongoose.connect('mongodb://localhost:27017/aroundb', {
 });
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: false}));
 
 app.post(
   '/signup',
@@ -32,7 +41,6 @@ app.post(
   }),
   createUser
 );
-
 app.post(
   '/signin',
   celebrate({
@@ -49,12 +57,12 @@ const {usersRouter} = require('./routes/users.js')
 const {cardsRouter} = require('./routes/cards.js')
 
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '5f825dab0d8e6ba76c15c74e'
-  };
-  next();
-});
+// app.use((req, res, next) => {
+//   req.user = {
+//     _id: '5f825dab0d8e6ba76c15c74e'
+//   };
+//   next();
+// });
 
 app.use(requestLogger)
 

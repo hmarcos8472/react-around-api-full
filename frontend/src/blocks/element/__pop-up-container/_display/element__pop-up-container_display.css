@@ -1,0 +1,5 @@
+.element__pop-up-container_display {
+  opacity: 1;
+  height: 100%;
+  display: flex;
+}

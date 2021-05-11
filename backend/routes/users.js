@@ -3,7 +3,7 @@ const {celebrate, Joi} = require('celebrate')
 
 const usersRouter = express.Router()
 
-const { getSingleUser, getUsers, createUser, updateUserName, updateAvatar, login, getCurrentUser } = require('../controllers/userController.js')
+const { getSingleUser, getUsers, createUser, updateProfile, updateAvatar, login, getCurrentUser } = require('../controllers/userController.js')
 
 usersRouter.get('/users', getUsers)
 usersRouter.get('/users/me', getCurrentUser)
@@ -28,7 +28,7 @@ usersRouter.patch(
       about: Joi.string().required().min(2).max(30)
     }).unknown(true)
   }),
-  updateUserName
+  updateProfile
 )
 
 usersRouter.patch(

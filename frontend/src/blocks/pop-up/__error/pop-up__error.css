@@ -1,0 +1,7 @@
+@import url("./_visible/pop-up__error_visible.css");
+
+.pop-up__error {
+  margin: 5px 0 15px;
+  color: #FF3A10;
+  font-size: 12px;
+}

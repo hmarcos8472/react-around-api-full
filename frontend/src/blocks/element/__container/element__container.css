@@ -1,0 +1,37 @@
+.element__container {
+  width: 55%;
+  margin: 0 auto;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(2, 1fr);
+  grid-column-gap: 18px;
+  grid-row-gap: 20px;
+}
+
+@media screen and (max-width: 1024px) {
+  .element__container {
+    width: 80%;
+  }
+}
+
+@media (min-width: 700px) and (max-width: 824px) {
+  .element__container {
+    width: 85%;
+  }
+}
+
+@media (min-width: 500px) and (max-width: 700px) {
+  .element__container {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .element__container {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    grid-template-rows: repeat(6, 1fr);
+    width: 90%;
+  }
+}

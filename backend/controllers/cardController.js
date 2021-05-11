@@ -1,26 +1,26 @@
 const Card = require('../models/card.js')
+const BadRequest = require('../middleware/errors/BadRequest');
+const NotFound = require('../middleware/errors/NotFound');
+const Unauthorized = require('../middleware/errors/Unauthorized');
 
-function getCards(req, res) {
+function getCards(req, res, next) {
   return Card.find({})
     .populate('owner')
     .then(cards => {
-      res.send(cards)
+      res.status(200).send(cards)
     })
-    .catch(() => res.status(500).send({message: "500 Internal server error"}))
+    .catch(next)
 }
 
 /////
 function createCard(req, res) {
   const {name, link } = req.body
   Card.create({name, link, owner: req.user._id})
-  .then(card => {res.send({data : card})})
-  .catch((err) => {
-    if (err.name === "ValidationError") {
-      res.status(400).send({message : "Card validation failed"})
-    } else {
-      res.status(500).send({message : "Internal server error"})
-    }
-  })
+  .then((card) => {
+      if (!card) {throw new BadRequest('Invalid Data for Card Creation!')}
+      res.status(201).send(card);
+    })
+    .catch(next)
 }
 
 /////
@@ -47,6 +47,14 @@ function likeCard(req, res) {
     { $addToSet: { likes: req.user._id } }, // add _id to the array if it's not there yet
     { new: true },
   )
+  .then((likeId) => {
+      if (!likeId) {
+        next(new NotFounded('This card does not exist.'));
+      }
+
+      res.status(200).send(likeId);
+    })
+    .catch(next);
 }
 
 /////
@@ -56,5 +64,13 @@ function dislikeCard(req, res){
     { $pull: { likes: req.user._id } }, // remove _id from the array
     { new: true },
   )
+  .then((unLikeId) => {
+      if (!unLikeId) {
+        throw new NotFounded('This card does not exist.');
+      }
+
+      res.status(200).send(unLikeId);
+    })
+    .catch(next);
 }
 module.exports = {getCards, createCard, deleteCard, likeCard, dislikeCard}

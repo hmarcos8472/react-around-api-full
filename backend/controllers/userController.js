@@ -10,12 +10,12 @@ const User = require('../models/user.js')
 const { NODE_ENV, JWT_SECRET } = process.env;
 
 /////
-function getUsers(req, res) {
+function getUsers(req, res, next) {
   return User.find({})
     .then(users => {
       res.send(users)
     })
-    .catch(() => res.status(500).send({message: "500 Internal server error"}))
+    .catch(next)
 };
 
 /////
@@ -96,12 +96,19 @@ function getCurrentUser(req, res, next) {
 }
 
 /////
-function updateUserName(req, res) {
-  User.findByIdAndUpdate(req.params.id, "name: req.body")
-    .then(user => res.send({ data: req.body }))
-    .catch((err) => {
-      res.status(500).send({ message: "500 Internal server error" });})
-};
+function updateProfile(req, res, next) {
+  return User.findByIdAndUpdate(
+      req.user._id,
+      {name: req.body.name,about: req.body.about},
+      {new: true, runValidators: true}
+    )
+    .then((profile) => {
+      if(!profile) throw new NotFounded('Profile Update: Not a valid profile ID');
+
+      return res.status(200).send({ data: profile });
+    })
+    .catch(next);
+}
 
 /////
 function updateAvatar(req, res, next) {
@@ -114,4 +121,4 @@ function updateAvatar(req, res, next) {
     .catch(next);
 }
 
-module.exports = {getSingleUser, getUsers, createUser, updateUserName, updateAvatar, getCurrentUser, login}
+module.exports = {getSingleUser, getUsers, createUser, updateProfile, updateAvatar, getCurrentUser, login}

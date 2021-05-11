@@ -1,0 +1,27 @@
+.element__image {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  max-width: 282px;
+  max-height: 282px;
+  height: 22.16vw;
+  background-color: #ddd;
+  border-radius: 10px 10px 0 0;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+  cursor: pointer;
+}
+
+@media (min-width: 500px) and (max-width: 700px) {
+  .element__image {
+    height: 282px;
+  }
+}
+
+@media (min-width: 320px) and (max-width: 500px) {
+  .element__image {
+    width: 282px;
+    height: 282px;
+  }
+}

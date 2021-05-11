@@ -1,4 +1,6 @@
+/* eslint-disable import/no-unresolved */
 const mongoose = require('mongoose');
+const validator = require('validator');
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -11,12 +13,21 @@ const cardSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator(v){
-        const urlRegexExpression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi
-        return urlRegexExpression.test(v)
-      },
-      message: "The submitted link is broken"
-    }
+      validator: (v) => validator.isURL(v, {
+        protocols: ['http', 'https', 'ftp'],
+        require_tld: true,
+        require_protocol: false,
+        require_host: true,
+        require_valid_protocol: true,
+        allow_underscores: true,
+        host_whitelist: false,
+        host_blacklist: false,
+        allow_trailing_dot: false,
+        allow_protocol_relative_urls: false,
+        disallow_auth: false,
+      }),
+      message: 'You must provide a valide URL for the image',
+    },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
@@ -24,7 +35,12 @@ const cardSchema = new mongoose.Schema({
     required: true
   },
   likes: {
-    type: Array,
+    type: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'user',
+      },
+    ],
     default: [],
   },
   createdAt: {

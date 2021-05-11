@@ -1,0 +1,6 @@
+@import url("./_hidden/header__text-container_hidden.css");
+
+.header__text-container {
+  display: flex;
+  flex-direction: row;
+}
