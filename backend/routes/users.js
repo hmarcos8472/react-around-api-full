@@ -3,7 +3,7 @@ const {celebrate, Joi} = require('celebrate')
 
 const usersRouter = express.Router()
 
-const { getSingleUser, getUsers, createUser, updateProfile, updateAvatar, login, getCurrentUser } = require('../controllers/userController.js')
+const { getSingleUser, getUsers, updateProfile, updateAvatar, getCurrentUser } = require('../controllers/userController.js')
 
 usersRouter.get('/users', getUsers)
 usersRouter.get('/users/me', getCurrentUser)
@@ -18,7 +18,6 @@ usersRouter.get(
   getSingleUser
 )
 
-usersRouter.post('/users', createUser)
 
 usersRouter.patch(
   '/users/me',

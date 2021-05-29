@@ -1,5 +1,4 @@
 const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
 
 const BadRequest = require('../middleware/errors/BadRequest');
 const NotFound = require('../middleware/errors/NotFound');
@@ -7,7 +6,10 @@ const Unauthorized = require('../middleware/errors/Unauthorized');
 
 const User = require('../models/user.js')
 
-const { NODE_ENV, JWT_SECRET } = process.env;
+const { generateToken } = require('../utils/jwt');
+
+const testtoken = generateToken(2983)
+console.log(testtoken)
 
 /////
 function getUsers(req, res, next) {
@@ -40,7 +42,6 @@ function getSingleUser(req, res) {
 /////
 function createUser(req, res, next) {
   const { email, password, name, about, avatar } = req.body;
-  //check email andd password validity
   if(!email || !password) {
     throw new BadRequest('Please enter a valid email or password');
   }
@@ -63,6 +64,33 @@ function createUser(req, res, next) {
     });
 }
 
+// function createUser(req, res, next) {
+//   const { name, about, avatar, email, password } = req.body;
+//
+//   if (!email || !password){
+//     return Promise.reject(new NotFound('email or password invalid'));
+//   }
+//   //check to see if email already exists
+//   return User.findOne({ email }).then((user) => {
+//     if (user) return Promise.reject(new BadRequest ('Email already exists'));
+//
+//     // hashing the password
+//     bcrypt
+//       .hash(req.body.password, 10)
+//       .then((hash) =>
+//         User.create({
+//           name,
+//           about,
+//           avatar,
+//           email,
+//           password: hash,
+//         })
+//       )
+//       .then((user) => res.status(200).send(user))
+//       .catch(next);
+//   });
+// }
+
 /////
 function login(req, res, next) {
   const { email, password } = req.body;
@@ -70,11 +98,7 @@ function login(req, res, next) {
     .then((user) => {
       if (!user) {throw new NotFound('This User does not exist!')}
 
-      const token = jwt.sign(
-        {_id: user._id},
-        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
-        {expiresIn: '7d'}
-      );
+      const token = generateToken(user._id)
 
       res.send({ token });
     })

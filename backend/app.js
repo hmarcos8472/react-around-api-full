@@ -7,6 +7,7 @@ const { celebrate, Joi, errors, Segments } = require('celebrate');
 const path = require('path')
 const cors = require('cors');
 const helmet = require('helmet');
+require('dotenv').config();
 
 const auth = require('./middleware/auth');
 const {requestLogger, errorLogger} = require('./middleware/logger');
@@ -52,11 +53,10 @@ app.post(
   login
 );
 
-app.use(auth)
 const {usersRouter} = require('./routes/users.js')
 const {cardsRouter} = require('./routes/cards.js')
 
-
+//
 // app.use((req, res, next) => {
 //   req.user = {
 //     _id: '5f825dab0d8e6ba76c15c74e'
@@ -66,8 +66,8 @@ const {cardsRouter} = require('./routes/cards.js')
 
 app.use(requestLogger)
 
-app.use('/', usersRouter)
-app.use('/', cardsRouter)
+app.use('/', auth, usersRouter)
+app.use('/', auth, cardsRouter)
 
 app.get('*', (req, res, next) => {
   next(new NotFound('Requested resource not found'));
