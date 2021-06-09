@@ -7,15 +7,13 @@ const bcrypt = require('bcryptjs');
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
-    default: "",
+    default: "name",
     minlength: 2,
     maxlength: 30,
   },
   about: {
     type: String,
-    required: true,
-    default: "",
+    default: "about",
     minlength: 2,
     maxlength: 30,
   },
@@ -39,7 +37,6 @@ const userSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    required: true,
     default: "https://i.picsum.photos/id/77/600/600.jpg?hmac=RlDxta3N3D28rxmvJVQpbbo8apc9g9catCJlibP6oeg",
     validate: {
       validator: (v) => validator.isURL(v),
